@@ -38,7 +38,7 @@ const Contact = () => {
         const body = `Halo, saya tertarik dengan layanan Zyllo.\n\nNama: ${formData.fullName}\nWhatsApp: ${formData.whatsapp}\nKebutuhan: ${formData.businessNeed}\n\nMohon hubungi saya segera. Terima kasih.`;
 
         // Ganti EMAIL_TUJUAN dengan email user nanti
-        const emailTujuan = "email@example.com";
+        const emailTujuan = "rkennedi8130@gmail.com";
         window.location.href = `mailto:${emailTujuan}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
         // 3. Reset Form & Tampilkan Sukses
