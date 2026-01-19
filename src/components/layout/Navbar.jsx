@@ -27,7 +27,7 @@ const Navbar = ({ scrolled, scrollToSection }) => {
 
                     {/* Desktop Menu */}
                     <div className="hidden md:flex space-x-8 items-center">
-                        {['Layanan', 'Keunggulan', 'AI Demo', 'Portfolio', 'FAQ'].map((item) => (
+                        {['Layanan', 'Keunggulan', 'Tanya IA', 'Portfolio', 'FAQ'].map((item) => (
                             <button
                                 key={item}
                                 onClick={() => scrollToSection(item.toLowerCase().replace(' ', '-'))}
