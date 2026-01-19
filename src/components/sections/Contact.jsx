@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
-import { Zap, CheckCircle } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { Zap, CheckCircle, Loader2 } from 'lucide-react';
 import Reveal from '../ui/Reveal';
+import emailjs from '@emailjs/browser';
 
 const Contact = () => {
+    const form = useRef();
     const [formData, setFormData] = useState({
         fullName: '',
         whatsapp: '',
         businessNeed: ''
     });
-    const [isSubmitted, setIsSubmitted] = useState(false);
+    const [status, setStatus] = useState('idle'); // idle, sending, success, error
 
     const handleChange = (e) => {
         setFormData({
@@ -19,33 +21,36 @@ const Contact = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        setStatus('sending');
 
-        // 1. Simpan ke LocalStorage (Simulasi Database)
+        // 1. Simpan ke LocalStorage (Backup)
         const newCustomer = {
             ...formData,
             id: Date.now(),
             timestamp: new Date().toLocaleString()
         };
-
         const existingCustomers = JSON.parse(localStorage.getItem('customers') || '[]');
         localStorage.setItem('customers', JSON.stringify([...existingCustomers, newCustomer]));
-
-        // Dispatch event agar counter update
         window.dispatchEvent(new Event('customerAdded'));
 
-        // 2. Siapkan Link Mailto (Simulasi Kirim Email)
-        const subject = `Pesan Baru dari ${formData.fullName}`;
-        const body = `Halo, saya tertarik dengan layanan Zyllo.\n\nNama: ${formData.fullName}\nWhatsApp: ${formData.whatsapp}\nKebutuhan: ${formData.businessNeed}\n\nMohon hubungi saya segera. Terima kasih.`;
-
-        // Ganti EMAIL_TUJUAN dengan email user nanti
-        const emailTujuan = "rkennedi8130@gmail.com";
-        window.location.href = `mailto:${emailTujuan}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-
-        // 3. Reset Form & Tampilkan Sukses
-        setIsSubmitted(true);
-        setFormData({ fullName: '', whatsapp: '', businessNeed: '' });
-
-        setTimeout(() => setIsSubmitted(false), 5000);
+        // 2. Kirim via EmailJS (Background SMTP)
+        // Gunakan Public Key dari Environment Variable
+        emailjs.sendForm(
+            import.meta.env.VITE_EMAILJS_SERVICE_ID,
+            import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+            form.current,
+            import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+        )
+            .then((result) => {
+                console.log('Email sent:', result.text);
+                setStatus('success');
+                setFormData({ fullName: '', whatsapp: '', businessNeed: '' });
+                setTimeout(() => setStatus('idle'), 5000);
+            }, (error) => {
+                console.error('Email failed:', error.text);
+                setStatus('error');
+                setTimeout(() => setStatus('idle'), 5000);
+            });
     };
 
     return (
@@ -64,20 +69,20 @@ const Contact = () => {
 
                 <Reveal delay={200}>
                     <div className="bg-white rounded-2xl p-8 shadow-2xl max-w-xl mx-auto text-left transform transition-all hover:scale-[1.01]">
-                        {isSubmitted ? (
+                        {status === 'success' ? (
                             <div className="text-center py-10">
                                 <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-                                <h3 className="text-2xl font-bold text-slate-800 mb-2">Terima Kasih!</h3>
-                                <p className="text-slate-600">Data Anda telah tersimpan. Aplikasi email Anda akan terbuka untuk mengirim pesan.</p>
+                                <h3 className="text-2xl font-bold text-slate-800 mb-2">Pesan Terkirim!</h3>
+                                <p className="text-slate-600">Terima kasih telah menghubungi kami. Tim kami akan segera membalas pesan Anda.</p>
                                 <button
-                                    onClick={() => setIsSubmitted(false)}
+                                    onClick={() => setStatus('idle')}
                                     className="mt-6 text-indigo-600 font-semibold hover:text-indigo-800"
                                 >
                                     Kirim pesan lagi
                                 </button>
                             </div>
                         ) : (
-                            <form className="space-y-4" onSubmit={handleSubmit}>
+                            <form ref={form} className="space-y-4" onSubmit={handleSubmit}>
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-1">Nama Lengkap</label>
                                     <input
@@ -122,10 +127,26 @@ const Contact = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-lg shadow-lg hover:shadow-xl transition-all mt-2 transform active:scale-95 flex justify-center items-center group">
-                                    <span>Kirim & Jadwalkan Konsultasi</span>
-                                    <Zap className="ml-2 w-5 h-5 group-hover:text-yellow-300 transition-colors" />
+                                <button
+                                    type="submit"
+                                    disabled={status === 'sending'}
+                                    className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-lg shadow-lg hover:shadow-xl transition-all mt-2 transform active:scale-95 flex justify-center items-center group disabled:opacity-70 disabled:cursor-not-allowed"
+                                >
+                                    {status === 'sending' ? (
+                                        <>
+                                            <Loader2 className="mr-2 w-5 h-5 animate-spin" />
+                                            <span>Mengirim...</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <span>Kirim & Jadwalkan Konsultasi</span>
+                                            <Zap className="ml-2 w-5 h-5 group-hover:text-yellow-300 transition-colors" />
+                                        </>
+                                    )}
                                 </button>
+                                {status === 'error' && (
+                                    <p className="text-sm text-red-500 text-center mt-2">Gagal mengirim pesan. Silakan coba lagi atau hubungi via WhatsApp.</p>
+                                )}
                                 <p className="text-xs text-slate-400 text-center mt-4">Data Anda aman. Kami akan menghubungi dalam 1x24 jam.</p>
                             </form>
                         )}
