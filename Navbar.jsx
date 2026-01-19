@@ -58,7 +58,7 @@ const Navbar = ({ scrolled, scrollToSection }) => {
             {isMenuOpen && (
                 <div className="md:hidden absolute top-full left-0 w-full bg-white shadow-xl border-t border-slate-100 animate-fade-in-up">
                     <div className="px-4 pt-2 pb-6 space-y-2 flex flex-col">
-                        {['Layanan', 'Keunggulan', 'AI Demo', 'Portfolio', 'FAQ'].map((item) => (
+                        {['Layanan', 'Keunggulan', 'Tanya AI', 'Portfolio', 'FAQ'].map((item) => (
                             <button
                                 key={item}
                                 onClick={() => handleNavClick(item.toLowerCase().replace(' ', '-'))}
