@@ -1,9 +1,10 @@
 import React from 'react';
 import { Instagram, Linkedin, Facebook, MapPin, Mail, Smartphone } from 'lucide-react';
+import AdminButton from '../ui/AdminButton';
 
 const Footer = () => {
     return (
-        <footer className="bg-slate-900 text-slate-300 pt-16 pb-8 border-t border-slate-800">
+        <footer className="bg-slate-900 text-slate-300 pt-16 pb-8 border-t border-slate-800 relative">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid md:grid-cols-4 gap-12 mb-12">
                     <div className="col-span-1 md:col-span-1">
@@ -67,6 +68,9 @@ const Footer = () => {
                     <p className="mt-2 md:mt-0">Dibuat dengan ❤️ untuk UMKM Indonesia</p>
                 </div>
             </div>
+
+            {/* Admin Tool for Database Export */}
+            <AdminButton />
         </footer>
     );
 };

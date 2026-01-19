@@ -1,8 +1,53 @@
-import React from 'react';
-import { Zap } from 'lucide-react';
+import React, { useState } from 'react';
+import { Zap, CheckCircle } from 'lucide-react';
 import Reveal from '../ui/Reveal';
 
 const Contact = () => {
+    const [formData, setFormData] = useState({
+        fullName: '',
+        whatsapp: '',
+        businessNeed: ''
+    });
+    const [isSubmitted, setIsSubmitted] = useState(false);
+
+    const handleChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value
+        });
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        // 1. Simpan ke LocalStorage (Simulasi Database)
+        const newCustomer = {
+            ...formData,
+            id: Date.now(),
+            timestamp: new Date().toLocaleString()
+        };
+
+        const existingCustomers = JSON.parse(localStorage.getItem('customers') || '[]');
+        localStorage.setItem('customers', JSON.stringify([...existingCustomers, newCustomer]));
+
+        // Dispatch event agar counter update
+        window.dispatchEvent(new Event('customerAdded'));
+
+        // 2. Siapkan Link Mailto (Simulasi Kirim Email)
+        const subject = `Pesan Baru dari ${formData.fullName}`;
+        const body = `Halo, saya tertarik dengan layanan Zyllo.\n\nNama: ${formData.fullName}\nWhatsApp: ${formData.whatsapp}\nKebutuhan: ${formData.businessNeed}\n\nMohon hubungi saya segera. Terima kasih.`;
+
+        // Ganti EMAIL_TUJUAN dengan email user nanti
+        const emailTujuan = "email@example.com";
+        window.location.href = `mailto:${emailTujuan}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+        // 3. Reset Form & Tampilkan Sukses
+        setIsSubmitted(true);
+        setFormData({ fullName: '', whatsapp: '', businessNeed: '' });
+
+        setTimeout(() => setIsSubmitted(false), 5000);
+    };
+
     return (
         <section id="contact" className="py-20 bg-indigo-600 relative overflow-hidden">
             {/* Decorative Circles with Animation */}
@@ -19,36 +64,71 @@ const Contact = () => {
 
                 <Reveal delay={200}>
                     <div className="bg-white rounded-2xl p-8 shadow-2xl max-w-xl mx-auto text-left transform transition-all hover:scale-[1.01]">
-                        <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-                            <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-1">Nama Lengkap</label>
-                                <input type="text" className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all hover:border-indigo-400" placeholder="Contoh: Budi Santoso" />
+                        {isSubmitted ? (
+                            <div className="text-center py-10">
+                                <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+                                <h3 className="text-2xl font-bold text-slate-800 mb-2">Terima Kasih!</h3>
+                                <p className="text-slate-600">Data Anda telah tersimpan. Aplikasi email Anda akan terbuka untuk mengirim pesan.</p>
+                                <button
+                                    onClick={() => setIsSubmitted(false)}
+                                    className="mt-6 text-indigo-600 font-semibold hover:text-indigo-800"
+                                >
+                                    Kirim pesan lagi
+                                </button>
                             </div>
-                            <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-1">Nomor WhatsApp</label>
-                                <input type="tel" className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all hover:border-indigo-400" placeholder="0812..." />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-1">Kebutuhan Bisnis</label>
-                                <div className="relative">
-                                    <select className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all bg-white appearance-none">
-                                        <option>Pilih Layanan...</option>
-                                        <option>Pembuatan Website</option>
-                                        <option>Aplikasi Mobile</option>
-                                        <option>Sistem Kasir/ERP</option>
-                                        <option>Konsultasi Umum</option>
-                                    </select>
-                                    <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none text-slate-500">
-                                        <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" fillRule="evenodd"></path></svg>
+                        ) : (
+                            <form className="space-y-4" onSubmit={handleSubmit}>
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700 mb-1">Nama Lengkap</label>
+                                    <input
+                                        required
+                                        name="fullName"
+                                        value={formData.fullName}
+                                        onChange={handleChange}
+                                        type="text"
+                                        className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all hover:border-indigo-400"
+                                        placeholder="Contoh: Budi Santoso"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700 mb-1">Nomor WhatsApp</label>
+                                    <input
+                                        required
+                                        name="whatsapp"
+                                        value={formData.whatsapp}
+                                        onChange={handleChange}
+                                        type="tel"
+                                        className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all hover:border-indigo-400"
+                                        placeholder="0812..."
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700 mb-1">Kebutuhan Bisnis</label>
+                                    <div className="relative">
+                                        <select
+                                            name="businessNeed"
+                                            value={formData.businessNeed}
+                                            onChange={handleChange}
+                                            className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all bg-white appearance-none"
+                                        >
+                                            <option value="">Pilih Layanan...</option>
+                                            <option value="Pembuatan Website">Pembuatan Website</option>
+                                            <option value="Aplikasi Mobile">Aplikasi Mobile</option>
+                                            <option value="Sistem Kasir/ERP">Sistem Kasir/ERP</option>
+                                            <option value="Konsultasi Umum">Konsultasi Umum</option>
+                                        </select>
+                                        <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none text-slate-500">
+                                            <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" fillRule="evenodd"></path></svg>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-lg shadow-lg hover:shadow-xl transition-all mt-2 transform active:scale-95 flex justify-center items-center group">
-                                <span>Kirim & Jadwalkan Konsultasi</span>
-                                <Zap className="ml-2 w-5 h-5 group-hover:text-yellow-300 transition-colors" />
-                            </button>
-                            <p className="text-xs text-slate-400 text-center mt-4">Data Anda aman. Kami akan menghubungi dalam 1x24 jam.</p>
-                        </form>
+                                <button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-lg shadow-lg hover:shadow-xl transition-all mt-2 transform active:scale-95 flex justify-center items-center group">
+                                    <span>Kirim & Jadwalkan Konsultasi</span>
+                                    <Zap className="ml-2 w-5 h-5 group-hover:text-yellow-300 transition-colors" />
+                                </button>
+                                <p className="text-xs text-slate-400 text-center mt-4">Data Anda aman. Kami akan menghubungi dalam 1x24 jam.</p>
+                            </form>
+                        )}
                     </div>
                 </Reveal>
             </div>
