@@ -76,7 +76,7 @@ const AIDemo = ({ scrollToSection }) => {
     };
 
     return (
-        <section id="ai-demo" className="py-20 bg-gradient-to-br from-indigo-900 to-slate-900 relative overflow-hidden text-white">
+        <section id="tanya-ai" className="py-20 bg-gradient-to-br from-indigo-900 to-slate-900 relative overflow-hidden text-white">
             <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
             <div className="absolute -top-24 -right-24 w-96 h-96 bg-purple-600/30 rounded-full blur-[80px]"></div>
             <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-indigo-600/30 rounded-full blur-[80px]"></div>
@@ -87,7 +87,7 @@ const AIDemo = ({ scrollToSection }) => {
                         <div>
                             <div className="inline-flex items-center px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 mb-6 backdrop-blur-sm">
                                 <Sparkles className="w-4 h-4 mr-2 text-yellow-300" />
-                                <span className="text-sm font-medium">Powered by Gemini AI</span>
+                                <span className="text-sm font-medium">Tanya AI</span>
                             </div>
                             <h2 className="text-3xl md:text-5xl font-bold mb-6 leading-tight">
                                 Temukan Konsep Digital <br />

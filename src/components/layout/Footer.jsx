@@ -49,7 +49,7 @@ const Footer = () => {
                         <ul className="space-y-4 text-sm">
                             <li className="flex items-start group">
                                 <MapPin className="w-5 h-5 mr-2 text-indigo-500 flex-shrink-0 group-hover:animate-bounce" />
-                                <span>Turi, Sleman , DI. Yogyakarta</span>
+                                <span>Turi, Sleman, Yogyakarta</span>
                             </li>
                             <li className="flex items-center group">
                                 <Mail className="w-5 h-5 mr-2 text-indigo-500 flex-shrink-0 group-hover:text-indigo-300 transition-colors" />
@@ -57,7 +57,7 @@ const Footer = () => {
                             </li>
                             <li className="flex items-center group">
                                 <Smartphone className="w-5 h-5 mr-2 text-indigo-500 flex-shrink-0 group-hover:text-indigo-300 transition-colors" />
-                                <span>+62 895-4123-18152</span>
+                                <span>+62 895-4123-4123</span>
                             </li>
                         </ul>
                     </div>
